@@ -1,6 +1,8 @@
 /* global chrome */
 import { JSDOM } from 'jsdom';
 
+import { parseClassesTable, parseSemesterName } from './parsingHelpers';
+
 chrome.runtime.onMessage.addListener(
   (request: BackgroundRequest, _, sendResponse) => {
     if (request.requestType === 'fetchTranslations') {
@@ -44,46 +46,13 @@ const parseTranslations = (translationsHTML: string): Translations => {
       [],
     )
     .forEach(([spanishTable, englishTable]) => {
-      Array.from(
-        spanishTable
-          .getElementsByTagName('table')[0]
-          ?.getElementsByTagName('tr'),
-      ).forEach((tr, index, list) => {
-        if (index === 0 || index === list.length - 1) return;
-        const [classCode, name] = extractClassCodeAndName(tr);
-        spanishClassNames[classCode] = name;
-      });
-
-      Array.from(
-        englishTable
-          .getElementsByTagName('table')[0]
-          ?.getElementsByTagName('tr'),
-      ).forEach((tr, index, list) => {
-        if (index === 0 || index === list.length - 1) return;
-        const [classCode, name] = extractClassCodeAndName(tr);
-        englishClassNames[classCode] = name;
-      });
-
+      Object.assign(spanishClassNames, parseClassesTable(spanishTable));
+      Object.assign(englishClassNames, parseClassesTable(englishTable));
       semesterNames.push([
-        extractSemesterName(spanishTable),
-        extractSemesterName(englishTable),
+        parseSemesterName(spanishTable),
+        parseSemesterName(englishTable),
       ]);
     });
 
   return { spanishClassNames, englishClassNames, semesterNames };
 };
-
-const extractClassCodeAndName = (
-  tableRow: HTMLTableRowElement,
-): [string, string] => {
-  const tableCells = tableRow.getElementsByTagName('td');
-  const classCodeChars = tableCells[0].textContent?.trim().split('')!;
-  const startingNumsIdx = classCodeChars.findIndex((ch) => /[0-9]/.test(ch));
-  classCodeChars.splice(startingNumsIdx, 0, '-');
-  const classCode = classCodeChars.join('');
-  const name = tableCells[1].textContent?.trim()!;
-  return [classCode, name];
-};
-
-const extractSemesterName = (table: Element) =>
-  table.getElementsByClassName('notaPeriodo')[0]?.textContent?.trim()!;
