@@ -1,22 +1,24 @@
 /* global chrome */
 import { JSDOM } from 'jsdom';
 
-chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
-  if (request.contentScriptQuery === 'fetchTranslations') {
-    fetchTranslationsPage('ITC11')
-      .then((response) => response.text())
-      .then((html) => parseTranslations(html))
-      .then((translations) => sendResponse(translations))
-      .catch((err) =>
-        console.error(
-          "You've ran into a problem!\n",
-          'Please report it at https://github.com/MarioJim/tec-transcript-translater/issues\n',
-          err,
-        ),
-      );
-    return true;
-  }
-});
+chrome.runtime.onMessage.addListener(
+  (request: BackgroundRequest, _, sendResponse) => {
+    if (request.requestType === 'fetchTranslations') {
+      fetchTranslationsPage(request.careerCode)
+        .then((response) => response.text())
+        .then((html) => parseTranslations(html))
+        .then((translations) => sendResponse(translations))
+        .catch((err) =>
+          console.error(
+            "You've ran into a problem!\n",
+            'Please report it at https://github.com/MarioJim/tec-transcript-translater/issues\n',
+            err,
+          ),
+        );
+      return true;
+    }
+  },
+);
 
 const fetchTranslationsPage = (careerCode: string) =>
   fetch('https://samp.itesm.mx/Programas/VistaPreliminarPeriodos', {
@@ -26,8 +28,8 @@ const fetchTranslationsPage = (careerCode: string) =>
   });
 
 const parseTranslations = (translationsHTML: string): Translations => {
-  const spanishSubjectNames: SubjectNames = {};
-  const englishSubjectNames: SubjectNames = {};
+  const spanishClassNames: ClassNames = {};
+  const englishClassNames: ClassNames = {};
   const semesterNames: SemesterNames = [];
 
   const { document } = new JSDOM(translationsHTML).window;
@@ -48,8 +50,8 @@ const parseTranslations = (translationsHTML: string): Translations => {
           ?.getElementsByTagName('tr'),
       ).forEach((tr, index, list) => {
         if (index === 0 || index === list.length - 1) return;
-        const [subjectCode, name] = extractSubjectCodeAndName(tr);
-        spanishSubjectNames[subjectCode] = name;
+        const [classCode, name] = extractClassCodeAndName(tr);
+        spanishClassNames[classCode] = name;
       });
 
       Array.from(
@@ -58,8 +60,8 @@ const parseTranslations = (translationsHTML: string): Translations => {
           ?.getElementsByTagName('tr'),
       ).forEach((tr, index, list) => {
         if (index === 0 || index === list.length - 1) return;
-        const [subjectCode, name] = extractSubjectCodeAndName(tr);
-        englishSubjectNames[subjectCode] = name;
+        const [classCode, name] = extractClassCodeAndName(tr);
+        englishClassNames[classCode] = name;
       });
 
       semesterNames.push([
@@ -68,16 +70,19 @@ const parseTranslations = (translationsHTML: string): Translations => {
       ]);
     });
 
-  return { spanishSubjectNames, englishSubjectNames, semesterNames };
+  return { spanishClassNames, englishClassNames, semesterNames };
 };
 
-const extractSubjectCodeAndName = (
+const extractClassCodeAndName = (
   tableRow: HTMLTableRowElement,
 ): [string, string] => {
   const tableCells = tableRow.getElementsByTagName('td');
-  const subjectCode = tableCells[0].textContent?.trim()!;
+  const classCodeChars = tableCells[0].textContent?.trim().split('')!;
+  const startingNumsIdx = classCodeChars.findIndex((ch) => /[0-9]/.test(ch));
+  classCodeChars.splice(startingNumsIdx, 0, '-');
+  const classCode = classCodeChars.join('');
   const name = tableCells[1].textContent?.trim()!;
-  return [subjectCode, name];
+  return [classCode, name];
 };
 
 const extractSemesterName = (table: Element) =>

@@ -1,13 +1,20 @@
 /// <reference types="react-browser-extension-scripts" />
 
 interface Translations {
-  spanishSubjectNames: SubjectNames;
-  englishSubjectNames: SubjectNames;
+  spanishClassNames: ClassNames;
+  englishClassNames: ClassNames;
   semesterNames: SemesterNames;
 }
 
-interface SubjectNames {
+interface ClassNames {
   [key: string]: string;
 }
 
 type SemesterNames = [string, string][];
+
+interface TranslationsRequest {
+  requestType: 'fetchTranslations';
+  careerCode: string;
+}
+
+type BackgroundRequest = TranslationsRequest;
