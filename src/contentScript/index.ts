@@ -3,7 +3,7 @@ import { translateInformationTable } from './translationsFinder';
 
 const career = document.querySelector('#main font')?.textContent;
 const request: BackgroundRequest = {
-  requestType: 'fetchTranslations',
+  requestType: 'fetchCurriculumTranslation',
   careerCode: career?.split(' ')[0]!,
 };
 
