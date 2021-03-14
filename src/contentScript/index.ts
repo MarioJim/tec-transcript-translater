@@ -1,4 +1,5 @@
 import { replaceClassNames, replaceSemesterNames } from './replacingHelpers';
+import { translateInformationTable } from './translationsFinder';
 
 const career = document.querySelector('#main font')?.textContent;
 const request: BackgroundRequest = {
@@ -17,4 +18,6 @@ chrome.runtime.sendMessage(request, (translations: Translations) => {
     tableDiv,
     translations.semesterNames.map((names) => names[1]),
   );
+  const informationTable = document.getElementById('tblDatos')!;
+  translateInformationTable(informationTable);
 });

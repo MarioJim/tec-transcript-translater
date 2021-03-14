@@ -13,7 +13,7 @@ const removeWatermark = async () => {
     function: () =>
       document
         .querySelectorAll('div#capita.watermark')
-        .forEach((watermarkDiv) => (watermarkDiv.innerHTML = '')),
+        .forEach((watermarkDiv) => watermarkDiv.remove()),
   });
 };
 
