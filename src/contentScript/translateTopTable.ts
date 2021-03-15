@@ -1,26 +1,24 @@
-export const translateInformationTable = (table: Element) => {
+export const translateTopTable = (table: Element) => {
   table.querySelectorAll('font.texto5').forEach((element) => {
-    const translation =
-      informationTableTranslations[element.textContent!.trim()];
+    const translation = topTableTranslations[element.textContent!.trim()];
     if (translation !== undefined) element.textContent = translation;
   });
 
   Array.from(table.querySelectorAll('font.texto4'))
     .filter((_, idx) => [1, 3, 5, 6, 7, 8].includes(idx))
     .forEach((element) => {
-      const request = {
-        requestType: 'fetchCustomTranslation',
-        text: element.textContent,
+      const request: TranslationRequest = {
+        requestType: 'translate',
+        text: element.textContent!,
       };
-      console.log(element, request);
       chrome.runtime.sendMessage(request, (translatedText: string) => {
-        console.log(element, translatedText);
+        console.log(element.textContent, translatedText);
         element.textContent = translatedText;
       });
     });
 };
 
-const informationTableTranslations: { [key: string]: string } = {
+const topTableTranslations: { [key: string]: string } = {
   'Nombre:': 'Name:',
   'Estatus Académico:': 'Academic Status:',
   'Matrícula:': 'Enrollment:',

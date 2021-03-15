@@ -1,15 +1,18 @@
 import { JSDOM } from 'jsdom';
 
-export const fetchCurriculumTranslationsPage = (careerCode: string) =>
+export const getCurriculum = (careerCode: string) =>
+  fetchCurriculumPage(careerCode)
+    .then((res) => res.text())
+    .then((html) => parseCurriculumPage(html));
+
+const fetchCurriculumPage = (careerCode: string) =>
   fetch('https://samp.itesm.mx/Programas/VistaPreliminarPeriodos', {
     method: 'POST',
     headers: { 'content-type': 'application/json; charset=UTF-8' },
     body: JSON.stringify({ clave: careerCode, cols: 0 }),
   });
 
-export const parseCurriculumTranslations = (
-  translationsHTML: string,
-): Translations => {
+const parseCurriculumPage = (translationsHTML: string): Translations => {
   const spanishClassNames: ClassNames = {};
   const englishClassNames: ClassNames = {};
   const semesterNames: SemesterNames = [];

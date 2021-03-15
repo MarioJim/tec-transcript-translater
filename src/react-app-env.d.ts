@@ -12,19 +12,17 @@ interface ClassNames {
 
 type SemesterNames = [string, string][];
 
-interface CurriculumTranslationRequest {
-  requestType: 'fetchCurriculumTranslation';
+interface CurriculumRequest {
+  requestType: 'getCurriculum';
   careerCode: string;
 }
 
-interface CustomTranslationRequest {
-  requestType: 'fetchCustomTranslation';
+interface TranslationRequest {
+  requestType: 'translate';
   text: string;
 }
 
-type BackgroundRequest =
-  | CurriculumTranslationRequest
-  | CustomTranslationRequest;
+type ServiceWorkerRequest = CurriculumRequest | TranslationRequest;
 
 interface ClassCodeAndName {
   classCode: string;

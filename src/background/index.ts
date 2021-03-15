@@ -1,19 +1,14 @@
-import {
-  fetchCurriculumTranslationsPage,
-  parseCurriculumTranslations,
-} from './fetchCurriculumTranslation';
-import { translate } from './fetchCustomTranslation';
+import { getCurriculum } from './getCurriculum';
+import { translate } from './translate';
 
 chrome.runtime.onMessage.addListener(
-  (request: BackgroundRequest, _, sendResponse) => {
-    if (request.requestType === 'fetchCurriculumTranslation') {
-      fetchCurriculumTranslationsPage(request.careerCode)
-        .then((response) => response.text())
-        .then((html) => parseCurriculumTranslations(html))
+  (request: ServiceWorkerRequest, _, sendResponse) => {
+    if (request.requestType === 'getCurriculum') {
+      getCurriculum(request.careerCode)
         .then((translations) => sendResponse(translations))
         .catch((err) => printError(err));
       return true;
-    } else if (request.requestType === 'fetchCustomTranslation') {
+    } else if (request.requestType === 'translate') {
       translate(request.text)
         .then((response) => sendResponse(response))
         .catch((err) => printError(err));
