@@ -1,9 +1,8 @@
-import translate from '@vitalets/google-translate-api';
-
 import {
   fetchCurriculumTranslationsPage,
   parseCurriculumTranslations,
 } from './fetchCurriculumTranslation';
+import { translate } from './fetchCustomTranslation';
 
 chrome.runtime.onMessage.addListener(
   (request: BackgroundRequest, _, sendResponse) => {
@@ -14,9 +13,9 @@ chrome.runtime.onMessage.addListener(
         .then((translations) => sendResponse(translations))
         .catch((err) => printError(err));
       return true;
-    } else if (request.requestType === 'translation') {
-      translate(request.text, { from: 'es', to: 'en' })
-        .then((response) => sendResponse(response.text))
+    } else if (request.requestType === 'fetchCustomTranslation') {
+      translate(request.text)
+        .then((response) => sendResponse(response))
         .catch((err) => printError(err));
       return true;
     }

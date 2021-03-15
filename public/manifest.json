@@ -12,7 +12,7 @@
   },
   "host_permissions": [
     "https://samp.itesm.mx/",
-    "https://translate.google.com"
+    "https://translate.google.com/"
   ],
   "permissions": ["activeTab", "scripting", "tabs"]
 }

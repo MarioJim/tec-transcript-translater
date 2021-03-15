@@ -18,7 +18,7 @@ interface CurriculumTranslationRequest {
 }
 
 interface CustomTranslationRequest {
-  requestType: 'translation';
+  requestType: 'fetchCustomTranslation';
   text: string;
 }
 

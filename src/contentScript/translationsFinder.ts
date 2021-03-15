@@ -4,20 +4,20 @@ export const translateInformationTable = (table: Element) => {
       informationTableTranslations[element.textContent!.trim()];
     if (translation !== undefined) element.textContent = translation;
   });
-};
 
-const translateScolarship = (text: string) =>
-  text
-    .replace('Sí', 'Yes')
-    .replace('Beca', 'Scolarship')
-    .replace('Crédito', 'Credit');
-
-const findTranslation = (text: string): string => {
-  return translations[text.trim()];
-};
-
-const translations: { [key: string]: string } = {
-  'Fecha de ingreso:': 'Date of admission:',
+  Array.from(table.querySelectorAll('font.texto4'))
+    .filter((_, idx) => [1, 3, 5, 6, 7, 8].includes(idx))
+    .forEach((element) => {
+      const request = {
+        requestType: 'fetchCustomTranslation',
+        text: element.textContent,
+      };
+      console.log(element, request);
+      chrome.runtime.sendMessage(request, (translatedText: string) => {
+        console.log(element, translatedText);
+        element.textContent = translatedText;
+      });
+    });
 };
 
 const informationTableTranslations: { [key: string]: string } = {
