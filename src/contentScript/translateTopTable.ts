@@ -1,4 +1,6 @@
-export const translateTopTable = (table: Element) => {
+export const translateTopTable = () => {
+  const table = document.getElementById('tblDatos')!;
+
   table.querySelectorAll('font.texto5').forEach((element) => {
     const translation = topTableTranslations[element.textContent!.trim()];
     if (translation !== undefined) element.textContent = translation;

@@ -1,7 +1,8 @@
-export const translateCurriculum = (
-  careerCode: string,
-  curriculumDiv: Element,
-) => {
+export const translateCurriculum = () => {
+  const careerElement = document.querySelector('#main font')!;
+  const careerCode = careerElement.textContent!.split(' ')[0]!;
+  const curriculumDiv = document.querySelector('div#planEstudios0')!;
+
   const request: CurriculumRequest = {
     requestType: 'getCurriculum',
     careerCode,
