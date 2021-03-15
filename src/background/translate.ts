@@ -8,8 +8,6 @@ let apiInfoPromise: Promise<string> | undefined;
 export const translate = async (text: string): Promise<string> => {
   const apiInfo = await getApiInformation();
   const url = `${translateURL}/_/TranslateWebserverUi/data/batchexecute?${apiInfo}`;
-  const opt = generateFetchOptions(text);
-  console.log(url, opt);
 
   return fetch(url, generateFetchOptions(text))
     .then((res) => res.text())
@@ -63,28 +61,13 @@ const generateFetchOptions = (text: string): RequestInit => {
 
 const parseTranslateResponse = (responseText: string): string => {
   let jsonStr = responseText.slice(6);
-  let json: any;
-
-  console.log('???0', jsonStr);
-  try {
-    const length = /^\d+/.exec(jsonStr)![0];
-    jsonStr = jsonStr.slice(
-      length.length,
-      parseInt(length, 10) + length.length,
-    );
-    console.log('???1', jsonStr);
-    json = JSON.parse(JSON.parse(jsonStr)[0][2]);
-    console.log('???2', json);
-  } catch (e) {
-    console.log('code path error', responseText);
-    return '';
-  }
+  const length = /^\d+/.exec(jsonStr)![0];
+  jsonStr = jsonStr.slice(length.length, parseInt(length, 10) + length.length);
+  const json = JSON.parse(JSON.parse(jsonStr)[0][2]);
 
   if (!json[1][0][0][5]) {
-    console.log('code path unexp', json);
     return json[1][0][0][0];
   } else {
-    console.log('code path exp');
     return json[1][0][0][5]
       .flatMap((obj: any) =>
         Array.isArray(obj) && obj.length >= 1 ? [obj[0]] : [],
