@@ -18,26 +18,26 @@ export const translate = async (text: string): Promise<string> => {
 
 const getApiInformation = async () => {
   if (!apiInfoPromise) {
-    apiInfoPromise = initApiInformation().then((info) => stringify(info));
+    apiInfoPromise = initApiInformation();
   }
   return apiInfoPromise;
 };
 
-const initApiInformation = async (): Promise<Record<string, any>> => {
+const initApiInformation = async (): Promise<string> => {
   const response = await fetch(translateURL);
   const responseText = await response.text();
 
-  const extract = (key: string, res: string) => {
-    const result = new RegExp(`"${key}":".*?"`).exec(res);
+  const extract = (key: string) => {
+    const result = new RegExp(`"${key}":".*?"`).exec(responseText);
     return result !== null
       ? result[0].replace(`"${key}":"`, '').slice(0, -1)
       : '';
   };
 
-  return {
+  const apiInformation = {
     rpcids: 'MkEWBc',
-    'f.sid': extract('FdrFJe', responseText),
-    bl: extract('cfb2h', responseText),
+    'f.sid': extract('FdrFJe'),
+    bl: extract('cfb2h'),
     hl: 'en-US',
     'soc-app': 1,
     'soc-platform': 1,
@@ -45,6 +45,8 @@ const initApiInformation = async (): Promise<Record<string, any>> => {
     _reqid: Math.floor(1000 + Math.random() * 9000),
     rt: 'c',
   };
+
+  return stringify(apiInformation);
 };
 
 const generateFetchOptions = (text: string): RequestInit => {
