@@ -1,4 +1,6 @@
-export const translateCurriculum = () => {
+import { sendRequest } from './sendRequest';
+
+export const translateCurriculum = async () => {
   const careerElement = document.querySelector('#main font')!;
   const careerCode = careerElement.textContent!.split(' ')[0]!;
   const curriculumDiv = document.querySelector('div#planEstudios0')!;
@@ -7,13 +9,12 @@ export const translateCurriculum = () => {
     requestType: 'getCurriculum',
     careerCode,
   };
-  chrome.runtime.sendMessage(request, (translations: Translations) => {
-    replaceClassNames(curriculumDiv, translations.englishClassNames);
-    replaceSemesterNames(
-      curriculumDiv,
-      translations.semesterNames.map((names) => names[1]),
-    );
-  });
+  const translations = await sendRequest<Translations>(request);
+  replaceClassNames(curriculumDiv, translations.englishClassNames);
+  replaceSemesterNames(
+    curriculumDiv,
+    translations.semesterNames.map((names) => names[1]),
+  );
 };
 
 const replaceClassNames = (curriculumDiv: Element, classNames: ClassNames) => {

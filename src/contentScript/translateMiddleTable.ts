@@ -1,3 +1,5 @@
+import { sendRequest } from './sendRequest';
+
 export const translateMiddleTable = () => {
   const table = document.getElementById('datosAcademicos0')!;
 
@@ -12,15 +14,13 @@ export const translateMiddleTable = () => {
 
   Array.from(table.querySelectorAll('td.texto4'))
     .filter((_, idx) => [0, 1, 2, 5].includes(idx))
-    .forEach((element) => {
+    .forEach(async (element) => {
       const request: TranslationRequest = {
         requestType: 'translate',
         text: element.textContent!,
       };
-      chrome.runtime.sendMessage(request, (translatedText: string) => {
-        console.log(element.textContent, translatedText);
-        element.textContent = translatedText;
-      });
+      const translatedText = await sendRequest<string>(request);
+      element.textContent = translatedText;
     });
 };
 

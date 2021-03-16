@@ -1,3 +1,5 @@
+import { sendRequest } from './sendRequest';
+
 export const translateTopTable = () => {
   const table = document.getElementById('tblDatos')!;
 
@@ -8,15 +10,13 @@ export const translateTopTable = () => {
 
   Array.from(table.querySelectorAll('font.texto4'))
     .filter((_, idx) => [1, 3, 5, 6, 7, 8].includes(idx))
-    .forEach((element) => {
+    .forEach(async (element) => {
       const request: TranslationRequest = {
         requestType: 'translate',
         text: element.textContent!,
       };
-      chrome.runtime.sendMessage(request, (translatedText: string) => {
-        console.log(element.textContent, translatedText);
-        element.textContent = translatedText;
-      });
+      const translatedText = await sendRequest<string>(request);
+      element.textContent = translatedText;
     });
 };
 

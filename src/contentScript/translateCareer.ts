@@ -1,4 +1,6 @@
-export const translateCareer = () => {
+import { sendRequest } from './sendRequest';
+
+export const translateCareer = async () => {
   const careerElement = document.querySelector('#main font')!;
   const careerCode = careerElement.textContent!.split(' ')[0];
   const career = careerElement.textContent!.split(' ').splice(2).join(' ');
@@ -13,10 +15,8 @@ export const translateCareer = () => {
     requestType: 'translate',
     text: career,
   };
-  chrome.runtime.sendMessage(request, (translatedText: string) => {
-    console.log(career, translatedText);
-    careerElement.textContent = `${careerCode} - ${translatedText}`;
-  });
+  const translatedText = await sendRequest<string>(request);
+  careerElement.textContent = `${careerCode} - ${translatedText}`;
 };
 
 const careerTranslations: { [key: string]: string } = {

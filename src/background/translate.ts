@@ -9,9 +9,11 @@ export const translate = async (text: string): Promise<string> => {
   const apiInfo = await getApiInformation();
   const url = `${translateURL}/_/TranslateWebserverUi/data/batchexecute?${apiInfo}`;
 
-  return fetch(url, generateFetchOptions(text))
-    .then((res) => res.text())
-    .then((res) => parseTranslateResponse(res));
+  const response = await fetch(url, generateFetchOptions(text));
+  const responseText = await response.text();
+  const translatedText = parseTranslateResponse(responseText);
+  console.log(`from: "${text}"\nto: "${translatedText}"`);
+  return translatedText;
 };
 
 const getApiInformation = async () => {
