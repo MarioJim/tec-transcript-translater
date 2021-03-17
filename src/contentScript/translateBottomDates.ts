@@ -1,8 +1,8 @@
 import { sendRequest } from './sendRequest';
 
-export const translateBottomDates = () => {
+export const translateBottomDates = async () => {
   const dateElements = Array.from(document.querySelectorAll('font.texto2'));
-  dateElements.forEach(async (element) => {
+  const promises = dateElements.map(async (element) => {
     const text = element.textContent!.includes('Sol')
       ? element.textContent!.substr(0, element.textContent!.indexOf('Sol') - 1)
       : element.textContent!;
@@ -14,4 +14,6 @@ export const translateBottomDates = () => {
     const translatedText = await sendRequest<string>(request);
     element.textContent = translatedText;
   });
+
+  await Promise.allSettled(promises);
 };

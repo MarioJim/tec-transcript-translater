@@ -1,10 +1,10 @@
 import { sendRequest } from './sendRequest';
 
-export const translateTableHeaders = () => {
-  const tableHeadersCells = document.querySelectorAll(
-    'tr.colorPrincipal2 font.texto5',
+export const translateTableHeaders = async () => {
+  const tableHeadersCells = Array.from(
+    document.querySelectorAll('tr.colorPrincipal2 font.texto5'),
   );
-  tableHeadersCells.forEach(async (element) => {
+  const promises = tableHeadersCells.map(async (element) => {
     const translation = tableHeadersTranslations[element.textContent!.trim()];
     if (typeof translation === 'string') {
       element.textContent = translation;
@@ -18,6 +18,8 @@ export const translateTableHeaders = () => {
     const translatedText = await sendRequest<string>(request);
     element.textContent = translatedText;
   });
+
+  await Promise.allSettled(promises);
 };
 
 const tableHeadersTranslations: { [key: string]: string } = {

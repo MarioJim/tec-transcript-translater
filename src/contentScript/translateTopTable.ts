@@ -1,6 +1,6 @@
 import { sendRequest } from './sendRequest';
 
-export const translateTopTable = () => {
+export const translateTopTable = async () => {
   const table = document.getElementById('tblDatos')!;
 
   table.querySelectorAll('font.texto5').forEach((element) => {
@@ -8,9 +8,9 @@ export const translateTopTable = () => {
     if (translation !== undefined) element.textContent = translation;
   });
 
-  Array.from(table.querySelectorAll('font.texto4'))
+  const promises = Array.from(table.querySelectorAll('font.texto4'))
     .filter((_, idx) => [1, 3, 5, 6, 7, 8].includes(idx))
-    .forEach(async (element) => {
+    .map(async (element) => {
       const request: TranslationRequest = {
         requestType: 'translate',
         text: element.textContent!,
@@ -18,6 +18,8 @@ export const translateTopTable = () => {
       const translatedText = await sendRequest<string>(request);
       element.textContent = translatedText;
     });
+
+  await Promise.allSettled(promises);
 };
 
 const topTableTranslations: { [key: string]: string } = {

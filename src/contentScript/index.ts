@@ -6,10 +6,14 @@ import { translateMiddleTable } from './translateMiddleTable';
 import { translateTableHeaders } from './translateTableHeaders';
 import { translateTopTable } from './translateTopTable';
 
-translateTopTable();
-translateCareer();
-translateMiddleTable();
-translateTableHeaders();
-translateCurriculum();
-translateClassesOutsideCurriculum();
-translateBottomDates();
+Promise.allSettled([
+  translateTopTable().then(() => console.log('top table')),
+  translateCareer().then(() => console.log('career')),
+  translateMiddleTable().then(() => console.log('middle table')),
+  translateTableHeaders().then(() => console.log('table headers')),
+  translateCurriculum().then(() => console.log('curriculum')),
+  translateClassesOutsideCurriculum().then(() =>
+    console.log('classes outside'),
+  ),
+  translateBottomDates().then(() => console.log('bottom dates')),
+]);

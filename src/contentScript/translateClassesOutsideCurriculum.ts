@@ -8,7 +8,7 @@ export const translateClassesOutsideCurriculum = async () => {
   const tableHeaders = otherTables
     .map((table) => table.querySelectorAll('td.colorPrincipal4 > font'))
     .flatMap((children) => Array.from(children));
-  tableHeaders.forEach(async (element) => {
+  const tablePromises = tableHeaders.map(async (element) => {
     const translation =
       classesOutsideCurriculumTranslations[element.textContent!.trim()];
     if (typeof translation === 'string') {
@@ -28,7 +28,7 @@ export const translateClassesOutsideCurriculum = async () => {
     .map((table) => table.querySelectorAll('tr > td:nth-child(3)'))
     .map((children) => Array.from(children))
     .flatMap((children) => children.slice(1));
-  classesTds.forEach(async (element) => {
+  const classesPromises = classesTds.map(async (element) => {
     const request: TranslationRequest = {
       requestType: 'translate',
       text: element.textContent!,
@@ -36,6 +36,8 @@ export const translateClassesOutsideCurriculum = async () => {
     const translatedText = await sendRequest<string>(request);
     element.textContent = translatedText;
   });
+
+  await Promise.allSettled([...tablePromises, ...classesPromises]);
 };
 
 const classesOutsideCurriculumTranslations: { [key: string]: string } = {
