@@ -12,6 +12,11 @@ interface ClassNames {
 
 type SemesterNames = [string, string][];
 
+interface CareerInfoRequest {
+  requestType: 'getCareerInfo';
+  careerCode: string;
+}
+
 interface CurriculumRequest {
   requestType: 'getCurriculum';
   careerCode: string;
@@ -22,7 +27,10 @@ interface TranslationRequest {
   text: string;
 }
 
-type ServiceWorkerRequest = CurriculumRequest | TranslationRequest;
+type ServiceWorkerRequest =
+  | CareerInfoRequest
+  | CurriculumRequest
+  | TranslationRequest;
 
 interface ClassCodeAndName {
   classCode: string;

@@ -1,3 +1,4 @@
+import { getCareerInfo } from './getCareerInfo';
 import { getCurriculum } from './getCurriculum';
 import { translate } from './translate';
 
@@ -7,6 +8,11 @@ chrome.runtime.onMessage.addListener(
       getCurriculum(request.careerCode)
         .then((translations) => sendResponse(translations))
         .catch((err) => printError(err));
+      return true;
+    } else if (request.requestType === 'getCareerInfo') {
+      getCareerInfo(request.careerCode).then((careerName) =>
+        sendResponse(careerName),
+      );
       return true;
     } else if (request.requestType === 'translate') {
       translate(request.text)
