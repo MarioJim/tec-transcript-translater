@@ -5,9 +5,11 @@
   "dependencies": {
     "@types/chrome": "^0.0.133",
     "@types/jsdom": "^16.2.7",
+    "@types/parse5": "^6.0.0",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
     "jsdom": "^16.5.0",
+    "parse5": "^6.0.1",
     "query-string": "^6.14.1",
     "react": "^17.0.1",
     "react-browser-extension-scripts": "4.0.10",
