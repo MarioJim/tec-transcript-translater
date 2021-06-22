@@ -1,5 +1,3 @@
-/// <reference types="react-browser-extension-scripts" />
-
 interface Translations {
   spanishClassNames: ClassNames;
   englishClassNames: ClassNames;

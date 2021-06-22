@@ -1,4 +1,4 @@
-import { JSDOM } from 'jsdom';
+import { Element, parseFragment, TextNode } from 'parse5';
 
 export const getCurriculum = (careerCode: string) =>
   fetchCurriculumPage(careerCode)
@@ -17,10 +17,9 @@ const parseCurriculumPage = (translationsHTML: string): Translations => {
   const englishClassNames: ClassNames = {};
   const semesterNames: SemesterNames = [];
 
-  const { document } = new JSDOM(translationsHTML).window;
-  const documentBody = document.getElementsByTagName('body')[0]!;
-  Array.from(documentBody.children)
-    .filter((el) => el.tagName === 'TABLE')
+  parseFragment(translationsHTML)
+    .childNodes.filter((el) => el.nodeName === 'table')
+    .map((el) => el as Element)
     .reduce<Element[][]>(
       (pairsList, _, index, list) =>
         index % 2 === 0
@@ -40,10 +39,17 @@ const parseCurriculumPage = (translationsHTML: string): Translations => {
   return { spanishClassNames, englishClassNames, semesterNames };
 };
 
-const parseClassesTable = (classesDiv: Element): ClassNames => {
-  const classesTable = classesDiv.getElementsByTagName('table')[0]!;
+const parseClassesTable = (classesTable: Element): ClassNames => {
+  const outerTbody = classesTable.childNodes[1] as Element;
+  const outerTr = outerTbody.childNodes[0] as Element;
+  const outerTd = outerTr.childNodes[1] as Element;
+  const innerDiv = outerTd.childNodes[5] as Element;
+  const innerTable = innerDiv.childNodes[1] as Element;
+  const innerTbody = innerTable.childNodes[1] as Element;
 
-  const entries = Array.from(classesTable.getElementsByTagName('tr'))
+  const entries = innerTbody.childNodes
+    .filter((el) => el.nodeName === 'tr')
+    .map((el) => el as Element)
     .flatMap((tr, index, list) =>
       index === 0 || index === list.length - 1
         ? []
@@ -54,20 +60,31 @@ const parseClassesTable = (classesDiv: Element): ClassNames => {
   return Object.fromEntries(entries);
 };
 
-const extractClassCodeAndName = (
-  tableRow: HTMLTableRowElement,
-): ClassCodeAndName => {
-  const tableCells = tableRow.getElementsByTagName('td');
+const extractClassCodeAndName = (tableRow: Element): ClassCodeAndName => {
+  const tableCells = tableRow.childNodes.filter((el) => el.nodeName === 'td');
 
-  const classCodeChars = tableCells[0].textContent?.trim().split('')!;
+  const classCodeTd = tableCells[0] as Element;
+  const classCodeSpan = classCodeTd.childNodes[1] as Element;
+  const classCodeText = classCodeSpan.childNodes[0] as TextNode;
+  const classCodeChars = classCodeText.value.trim().split('');
   const startingNumsIdx = classCodeChars.findIndex((ch) => /[0-9]/.test(ch));
   classCodeChars.splice(startingNumsIdx, 0, '-');
 
+  const classNameTd = tableCells[1] as Element;
+  const classNameText = classNameTd.childNodes[0] as TextNode;
+
   return {
     classCode: classCodeChars.join(''),
-    name: tableCells[1].textContent?.trim()!,
+    name: classNameText.value.trim(),
   };
 };
 
-const parseSemesterName = (table: Element) =>
-  table.getElementsByClassName('notaPeriodo')[0]?.textContent?.trim()!;
+const parseSemesterName = (table: Element) => {
+  const tableTbody = table.childNodes[1] as Element;
+  const tableTr = tableTbody.childNodes[0] as Element;
+  const tableTd = tableTr.childNodes[1] as Element;
+  const div = tableTd.childNodes[1] as Element;
+  const span = div.childNodes[1] as Element;
+  const text = span.childNodes[0] as TextNode;
+  return text.value.trim();
+};

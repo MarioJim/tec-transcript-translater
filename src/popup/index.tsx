@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Popup from './popup/Popup';
-import './popup/index.css';
+import Popup from './Popup';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -10,3 +9,5 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root'),
 );
+
+if ((module as any).hot) (module as any).hot.accept();

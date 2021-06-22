@@ -27,11 +27,11 @@ const translatePage = async () => {
 };
 
 const Popup: React.FC = () => (
-  <div>
+  <>
     <button onClick={openTranscript}>Abrir Historia Académica</button>
     <button onClick={removeWatermark}>Quitar la marca de agua</button>
     <button onClick={translatePage}>Traducir página</button>
-  </div>
+  </>
 );
 
 export default Popup;
