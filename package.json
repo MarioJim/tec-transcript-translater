@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node utils/build.js",
     "start": "node utils/webserver.js",
+    "test": "npx jest",
     "prettier": "prettier --write 'src/**/*.{ts,tsx,html}' 'utils/*.js'"
   },
   "dependencies": {
@@ -24,9 +25,11 @@
     "@babel/preset-env": "^7.14.7",
     "@babel/preset-react": "^7.14.5",
     "@types/chrome": "^0.0.133",
+    "@types/jest": "^26.0.23",
     "@types/parse5": "^6.0.0",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
+    "babel-jest": "^27.0.5",
     "babel-loader": "^8.2.2",
     "babel-preset-react-app": "^10.0.0",
     "clean-webpack-plugin": "^3.0.0",
@@ -42,6 +45,8 @@
     "file-loader": "^6.2.0",
     "html-loader": "^2.1.2",
     "html-webpack-plugin": "^5.3.1",
+    "jest": "^27.0.5",
+    "node-fetch": "^2.6.1",
     "prettier": "^2.3.1",
     "source-map-loader": "^3.0.0",
     "style-loader": "^2.0.0",
@@ -71,6 +76,10 @@
     "semi": true,
     "singleQuote": true,
     "trailingComma": "all"
+  },
+  "jest": {
+    "rootDir": "src",
+    "testTimeout": 20000
   },
   "browserslist": {
     "production": [

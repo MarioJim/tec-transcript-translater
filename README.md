@@ -4,7 +4,7 @@ Simple browser extension to translate ITESM's transcript to english
 
 ## Installation
 
-First off, go to the `Releases` tab, download the latest version and extract the zip somewhere.
+First off, go to the `Releases` tab, download `tec-transcript-translater.zip` from the latest version and extract the zip somewhere.
 
 Then, load your extension on Chrome:
 
