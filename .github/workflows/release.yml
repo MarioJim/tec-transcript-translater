@@ -1,12 +1,12 @@
-name: Continuous Deployment
+name: Release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
-  gradle:
+  build-extension:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout Repo
@@ -30,8 +30,14 @@ jobs:
       - name: Build extension
         run: yarn build
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
+      - name: Create zip from build folder
+        run: |
+          mv build tec-transcript-translater
+          zip -r tec-transcript-translater.zip tec-transcript-translater/*
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
         with:
-          name: tec-transcript-translater
-          path: build/
+          files: tec-transcript-translater.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
