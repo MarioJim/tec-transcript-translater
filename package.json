@@ -5,7 +5,7 @@
   "scripts": {
     "build": "node utils/build.js",
     "start": "node utils/webserver.js",
-    "test": "npx jest",
+    "test": "jest",
     "prettier": "prettier --write 'src/**/*.{ts,tsx,html}' 'utils/*.js'"
   },
   "dependencies": {

@@ -2,8 +2,10 @@ name: Continuous Integration
 
 on:
   push:
-    branches:
-      - main
+    paths:
+      - 'src/**'
+      - 'utils/**'
+      - 'yarn.lock'
 
 jobs:
   build-extension:
