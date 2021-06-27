@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Button, { LoadingStates } from './Button';
 
 const openTranscript = () =>
   chrome.tabs.create({
@@ -26,12 +27,26 @@ const translatePage = async () => {
   });
 };
 
-const Popup: React.FC = () => (
-  <>
-    <button onClick={openTranscript}>Abrir Historia Académica</button>
-    <button onClick={removeWatermark}>Quitar la marca de agua</button>
-    <button onClick={translatePage}>Traducir página</button>
-  </>
-);
+const Popup: React.FC = () => {
+  const [removeWmkState, setRemoveWmkState] = useState<LoadingStates>(
+    LoadingStates.HasntStarted,
+  );
+
+  return (
+    <>
+      <Button onClick={openTranscript}>Abrir Historia Académica</Button>
+      <Button
+        state={removeWmkState}
+        onClick={async () => {
+          await removeWatermark();
+          setRemoveWmkState(LoadingStates.Success);
+        }}
+      >
+        Quitar la marca de agua
+      </Button>
+      <Button onClick={translatePage}>Traducir página</Button>
+    </>
+  );
+};
 
 export default Popup;
