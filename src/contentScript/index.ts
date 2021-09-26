@@ -4,8 +4,8 @@ import {
 } from '../ContentScriptRequest';
 import { translateBottomDates } from './translateBottomDates';
 import { translateCareer } from './translateCareer';
-import { translateClassesOutsideCurriculum } from './translateClassesOutsideCurriculum';
 import { translateCurriculum } from './translateCurriculum';
+import { translateExtraClasses } from './translateExtraClasses';
 import { translateMiddleTable } from './translateMiddleTable';
 import { translateTableHeaders } from './translateTableHeaders';
 import { translateTopTable } from './translateTopTable';
@@ -23,13 +23,13 @@ chrome.runtime.onMessage.addListener(
           .then(() => sendResponse())
           .catch((err) => sendResponse(err));
         return true;
-      case ContentScriptRequest.TranslateClassesOutsideCurriculum:
-        translateClassesOutsideCurriculum()
+      case ContentScriptRequest.TranslateCurriculum:
+        translateCurriculum()
           .then(() => sendResponse())
           .catch((err) => sendResponse(err));
         return true;
-      case ContentScriptRequest.TranslateCurriculum:
-        translateCurriculum()
+      case ContentScriptRequest.TranslateExtraClasses:
+        translateExtraClasses()
           .then(() => sendResponse())
           .catch((err) => sendResponse(err));
         return true;

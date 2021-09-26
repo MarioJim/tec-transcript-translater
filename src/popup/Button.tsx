@@ -1,17 +1,31 @@
 import React from 'react';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import LoadingButton from '@mui/lab/LoadingButton';
-import { LoadingStates } from './LoadingStates';
+import MUIButton from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 
-const getIcon = (state?: LoadingStates): JSX.Element | undefined => {
-  if (state === LoadingStates.Success) return <CheckIcon color="success" />;
-  if (state === LoadingStates.Error) return <CloseIcon color="error" />;
+import { State } from './State';
+
+const getIcon = (state?: State): JSX.Element | undefined => {
+  switch (state) {
+    case State.Success:
+      return <CheckIcon color="success" />;
+    case State.Loading:
+      return (
+        <CircularProgress
+          size={16}
+          color="inherit"
+          sx={{ marginRight: '2px' }}
+        />
+      );
+    case State.Error:
+      return <CloseIcon color="error" />;
+  }
 };
 
 interface ButtonProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  state?: LoadingStates;
+  state?: State;
 }
 
 const Button: React.FC<ButtonProps> = ({ children, onClick, state }) => {
@@ -29,9 +43,7 @@ const Button: React.FC<ButtonProps> = ({ children, onClick, state }) => {
         margin: '12px',
       };
   return (
-    <LoadingButton
-      loading={state === LoadingStates.Loading}
-      loadingPosition="end"
+    <MUIButton
       endIcon={getIcon(state)}
       onClick={onClick}
       style={{
@@ -44,7 +56,7 @@ const Button: React.FC<ButtonProps> = ({ children, onClick, state }) => {
       variant={onlyText ? 'text' : 'outlined'}
     >
       {children}
-    </LoadingButton>
+    </MUIButton>
   );
 };
 

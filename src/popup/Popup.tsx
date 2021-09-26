@@ -4,7 +4,7 @@ import {
   ContentScriptRequest,
   ContentScriptRequestValue,
 } from '../ContentScriptRequest';
-import { LoadingStates } from './LoadingStates';
+import { State } from './State';
 
 const openTranscript = () =>
   chrome.tabs.create({
@@ -35,21 +35,18 @@ const translatePage = async (
   });
 };
 
-type TranslateState = { [key in ContentScriptRequestValue]: LoadingStates };
+type TranslateState = { [key in ContentScriptRequestValue]: State };
 
 const Popup: React.FC = () => {
-  const [removeWmkState, setRemoveWmkState] = useState<LoadingStates>(
-    LoadingStates.HasntStarted,
-  );
+  const [removeWmkState, setRemoveWmkState] = useState<State>(State.Initial);
   const [translateState, setTranslateState] = useState<TranslateState>({
-    [ContentScriptRequest.TranslateBottomDates]: LoadingStates.Loading,
-    [ContentScriptRequest.TranslateCareer]: LoadingStates.Loading,
-    [ContentScriptRequest.TranslateClassesOutsideCurriculum]:
-      LoadingStates.Loading,
-    [ContentScriptRequest.TranslateCurriculum]: LoadingStates.Loading,
-    [ContentScriptRequest.TranslateMiddleTable]: LoadingStates.Loading,
-    [ContentScriptRequest.TranslateTableHeaders]: LoadingStates.Loading,
-    [ContentScriptRequest.TranslateTopTable]: LoadingStates.Loading,
+    [ContentScriptRequest.TranslateBottomDates]: State.Initial,
+    [ContentScriptRequest.TranslateCareer]: State.Initial,
+    [ContentScriptRequest.TranslateCurriculum]: State.Initial,
+    [ContentScriptRequest.TranslateExtraClasses]: State.Initial,
+    [ContentScriptRequest.TranslateMiddleTable]: State.Initial,
+    [ContentScriptRequest.TranslateTableHeaders]: State.Initial,
+    [ContentScriptRequest.TranslateTopTable]: State.Initial,
   });
 
   return (
@@ -59,7 +56,7 @@ const Popup: React.FC = () => {
         state={removeWmkState}
         onClick={async () => {
           await removeWatermark();
-          setRemoveWmkState(LoadingStates.Success);
+          setRemoveWmkState(State.Success);
         }}
       >
         Quitar la marca de agua
@@ -67,20 +64,19 @@ const Popup: React.FC = () => {
       <Button
         onClick={async () => {
           setTranslateState({
-            [ContentScriptRequest.TranslateBottomDates]: LoadingStates.Loading,
-            [ContentScriptRequest.TranslateCareer]: LoadingStates.Loading,
-            [ContentScriptRequest.TranslateClassesOutsideCurriculum]:
-              LoadingStates.Loading,
-            [ContentScriptRequest.TranslateCurriculum]: LoadingStates.Loading,
-            [ContentScriptRequest.TranslateMiddleTable]: LoadingStates.Loading,
-            [ContentScriptRequest.TranslateTableHeaders]: LoadingStates.Loading,
-            [ContentScriptRequest.TranslateTopTable]: LoadingStates.Loading,
+            [ContentScriptRequest.TranslateBottomDates]: State.Loading,
+            [ContentScriptRequest.TranslateCareer]: State.Loading,
+            [ContentScriptRequest.TranslateCurriculum]: State.Loading,
+            [ContentScriptRequest.TranslateExtraClasses]: State.Loading,
+            [ContentScriptRequest.TranslateMiddleTable]: State.Loading,
+            [ContentScriptRequest.TranslateTableHeaders]: State.Loading,
+            [ContentScriptRequest.TranslateTopTable]: State.Loading,
           });
           console.log('traducir pag onclick called');
           await translatePage((request, err) =>
             setTranslateState((prevState) => ({
               ...prevState,
-              [request]: err ? LoadingStates.Error : LoadingStates.Success,
+              [request]: err ? State.Error : State.Success,
             })),
           );
         }}
@@ -88,7 +84,7 @@ const Popup: React.FC = () => {
         Traducir página
       </Button>
       {Object.entries(translateState)
-        .filter(([_, rowState]) => rowState !== LoadingStates.HasntStarted)
+        .filter(([_, rowState]) => rowState !== State.Initial)
         .map(([rowName, rowState], idx) => (
           <Button state={rowState} key={idx}>
             {rowName}

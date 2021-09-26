@@ -1,6 +1,6 @@
 import { sendRequest } from './sendRequest';
 
-export const translateClassesOutsideCurriculum = async () => {
+export const translateExtraClasses = async () => {
   const otherTables = Array.from(
     document.querySelectorAll('#main > table'),
   ).filter((_, idx) => idx === 3 || idx === 4);

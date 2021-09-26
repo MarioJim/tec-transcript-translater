@@ -1,7 +1,7 @@
 export const ContentScriptRequest = {
   TranslateBottomDates: 'Traducir fechas de abajo',
   TranslateCareer: 'Traducir nombre de la carrera',
-  TranslateClassesOutsideCurriculum: 'Traducir clases fuera del currículum',
+  TranslateExtraClasses: 'Traducir clases extracurriculares',
   TranslateCurriculum: 'Traducir currículum',
   TranslateMiddleTable: 'Traducir tabla de enmedio',
   TranslateTableHeaders: 'Traducir encabezados de las tablas',
