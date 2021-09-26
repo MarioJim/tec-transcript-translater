@@ -1,3 +1,5 @@
+const path = require('path');
+
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 process.env.PORT = process.env.PORT || 3000;
 
@@ -5,28 +7,11 @@ const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const DotenvWebpackPlugin = require('dotenv-webpack');
 const TerserPlugin = require('terser-webpack-plugin');
-const path = require('path');
 
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
-const alias = {
-  'react-dom': '@hot-loader/react-dom',
-};
-
-const fileExtensions = [
-  'jpg',
-  'jpeg',
-  'png',
-  'gif',
-  'eot',
-  'otf',
-  'svg',
-  'ttf',
-  'woff',
-  'woff2',
-];
+const fileExtensions = ['jpg', 'jpeg', 'png', 'svg'];
 
 const options = {
   mode: process.env.NODE_ENV || 'development',
@@ -36,7 +21,7 @@ const options = {
     contentScript: path.join(__dirname, 'src', 'contentScript', 'index.ts'),
   },
   chromeExtensionBoilerplate: {
-    notHotReload: ['contentScript'],
+    notHotReload: ['contentScript', 'background'],
   },
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -53,9 +38,7 @@ const options = {
       {
         test: new RegExp('.(' + fileExtensions.join('|') + ')$'),
         loader: 'file-loader',
-        options: {
-          name: '[name].[ext]',
-        },
+        options: { name: '[name].[ext]' },
         exclude: /node_modules/,
       },
       {
@@ -64,15 +47,10 @@ const options = {
         exclude: /node_modules/,
       },
       { test: /\.(ts|tsx)$/, loader: 'ts-loader', exclude: /node_modules/ },
-      {
-        test: /\.(js|jsx)$/,
-        use: [{ loader: 'source-map-loader' }, { loader: 'babel-loader' }],
-        exclude: /node_modules/,
-      },
     ],
   },
   resolve: {
-    alias: alias,
+    alias: { 'react-dom': '@hot-loader/react-dom' },
     extensions: fileExtensions
       .map((extension) => '.' + extension)
       .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
@@ -84,14 +62,13 @@ const options = {
       verbose: true,
       cleanStaleWebpackAssets: true,
     }),
-    new DotenvWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [
         {
           from: 'src/manifest.json',
           to: path.join(__dirname, 'build'),
           force: true,
-          transform: (content, path) =>
+          transform: (content, _) =>
             Buffer.from(
               JSON.stringify({
                 description: process.env.npm_package_description,

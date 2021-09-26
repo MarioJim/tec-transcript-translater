@@ -72,7 +72,6 @@ const Popup: React.FC = () => {
             [ContentScriptRequest.TranslateTableHeaders]: State.Loading,
             [ContentScriptRequest.TranslateTopTable]: State.Loading,
           });
-          console.log('traducir pag onclick called');
           await translatePage((request, err) =>
             setTranslateState((prevState) => ({
               ...prevState,

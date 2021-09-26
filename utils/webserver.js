@@ -1,11 +1,7 @@
-const dotenv = require('dotenv');
-
 process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 process.env.ASSET_PATH = '/';
 process.env.PORT = process.env.PORT || 3000;
-
-dotenv.config();
 
 const WebpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
@@ -24,30 +20,29 @@ for (const entryName in config.entry) {
   }
 }
 
-config.plugins = [new webpack.HotModuleReplacementPlugin()].concat(
-  config.plugins || [],
-);
-
 delete config.chromeExtensionBoilerplate;
 
 const compiler = webpack(config);
 
-const server = new WebpackDevServer(compiler, {
-  https: false,
-  hot: true,
-  injectClient: false,
-  writeToDisk: true,
-  port: process.env.PORT,
-  contentBase: path.join(__dirname, '../build'),
-  publicPath: `http://localhost:${process.env.PORT}`,
-  headers: {
-    'Access-Control-Allow-Origin': '*',
+const server = new WebpackDevServer(
+  {
+    port: process.env.PORT,
+    allowedHosts: 'all',
+    client: false,
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    devMiddleware: {
+      publicPath: `http://localhost:${process.env.PORT}`,
+      writeToDisk: true,
+    },
+    static: {
+      directory: path.join(__dirname, '../build'),
+    },
   },
-  disableHostCheck: true,
-});
+  compiler,
+);
 
 if (process.env.NODE_ENV === 'development' && module.hot) {
   module.hot.accept();
 }
 
-server.listen(process.env.PORT);
+server.start();

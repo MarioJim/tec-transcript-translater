@@ -1,10 +1,6 @@
-const dotenv = require('dotenv');
-
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
 process.env.ASSET_PATH = '/';
-
-dotenv.config();
 
 const webpack = require('webpack');
 
