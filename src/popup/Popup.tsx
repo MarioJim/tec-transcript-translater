@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import Button, { LoadingStates } from './Button';
+import Button from './Button';
+import {
+  ContentScriptRequest,
+  ContentScriptRequestValue,
+} from '../ContentScriptRequest';
+import { LoadingStates } from './LoadingStates';
 
 const openTranscript = () =>
   chrome.tabs.create({
@@ -18,19 +23,34 @@ const removeWatermark = async () => {
   });
 };
 
-const translatePage = async () => {
+const translatePage = async (
+  callback: (req: ContentScriptRequestValue, err: boolean) => void,
+) => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id! },
-    files: ['contentScript.bundle.js'],
+  Object.values(ContentScriptRequest).forEach((request) => {
+    chrome.tabs.sendMessage(tab.id!, request, (err) =>
+      callback(request, !!err),
+    );
   });
 };
+
+type TranslateState = { [key in ContentScriptRequestValue]: LoadingStates };
 
 const Popup: React.FC = () => {
   const [removeWmkState, setRemoveWmkState] = useState<LoadingStates>(
     LoadingStates.HasntStarted,
   );
+  const [translateState, setTranslateState] = useState<TranslateState>({
+    [ContentScriptRequest.TranslateBottomDates]: LoadingStates.Loading,
+    [ContentScriptRequest.TranslateCareer]: LoadingStates.Loading,
+    [ContentScriptRequest.TranslateClassesOutsideCurriculum]:
+      LoadingStates.Loading,
+    [ContentScriptRequest.TranslateCurriculum]: LoadingStates.Loading,
+    [ContentScriptRequest.TranslateMiddleTable]: LoadingStates.Loading,
+    [ContentScriptRequest.TranslateTableHeaders]: LoadingStates.Loading,
+    [ContentScriptRequest.TranslateTopTable]: LoadingStates.Loading,
+  });
 
   return (
     <>
@@ -44,7 +64,36 @@ const Popup: React.FC = () => {
       >
         Quitar la marca de agua
       </Button>
-      <Button onClick={translatePage}>Traducir página</Button>
+      <Button
+        onClick={async () => {
+          setTranslateState({
+            [ContentScriptRequest.TranslateBottomDates]: LoadingStates.Loading,
+            [ContentScriptRequest.TranslateCareer]: LoadingStates.Loading,
+            [ContentScriptRequest.TranslateClassesOutsideCurriculum]:
+              LoadingStates.Loading,
+            [ContentScriptRequest.TranslateCurriculum]: LoadingStates.Loading,
+            [ContentScriptRequest.TranslateMiddleTable]: LoadingStates.Loading,
+            [ContentScriptRequest.TranslateTableHeaders]: LoadingStates.Loading,
+            [ContentScriptRequest.TranslateTopTable]: LoadingStates.Loading,
+          });
+          console.log('traducir pag onclick called');
+          await translatePage((request, err) =>
+            setTranslateState((prevState) => ({
+              ...prevState,
+              [request]: err ? LoadingStates.Error : LoadingStates.Success,
+            })),
+          );
+        }}
+      >
+        Traducir página
+      </Button>
+      {Object.entries(translateState)
+        .filter(([_, rowState]) => rowState !== LoadingStates.HasntStarted)
+        .map(([rowName, rowState], idx) => (
+          <Button state={rowState} key={idx}>
+            {rowName}
+          </Button>
+        ))}
     </>
   );
 };

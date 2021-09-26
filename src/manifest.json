@@ -10,6 +10,13 @@
   "background": {
     "service_worker": "background.bundle.js"
   },
+  "content_scripts": [
+    {
+      "matches": ["https://alsvdbw01.itesm.mx/servesc/plsql/*"],
+      "run_at": "document_idle",
+      "js": ["contentScript.bundle.js"]
+    }
+  ],
   "host_permissions": [
     "https://samp.itesm.mx/",
     "https://translate.google.com/"

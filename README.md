@@ -1,6 +1,6 @@
 # tec-transcript-translater
 
-![GitHub top language](https://img.shields.io/github/languages/top/MarioJim/ResumeAndPortfolio)
+![GitHub top language](https://img.shields.io/github/languages/top/MarioJim/tec-transcript-translater)
 ![Lines of code](https://tokei.rs/b1/github/MarioJim/tec-transcript-translater?category=code)
 ![Continuous Integration](https://github.com/MarioJim/tec-transcript-translater/workflows/Continuous%20Integration/badge.svg)
 
